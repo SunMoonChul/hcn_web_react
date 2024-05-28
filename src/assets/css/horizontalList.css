@@ -1,0 +1,28 @@
+.horizontal-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px;
+}
+
+.horizontal-item {
+    flex: 0 0 auto; /* flex-basis를 auto로 설정하여 각 아이템의 기본 크기를 유지 */
+    width: 20%; /* 각 아이템을 20% 너비로 설정하여 한 번에 5개씩 보이게 함 */
+    margin-right: 10px; /* 아이템 사이의 간격 */
+    background: #f0f0f0; /* 배경색 설정 */
+    padding: 10px; /* 패딩 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+/* 스크롤바 스타일링 (선택적) */
+.horizontal-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.horizontal-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.horizontal-list::-webkit-scrollbar-track {
+    background: #efefef;
+}

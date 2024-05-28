@@ -1,0 +1,221 @@
+.Overlay {
+  background: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Modal {
+  background: #f9f9f9; /* Light grey background for the outer modal */
+  border-radius: 10px;
+  padding: 20px;
+  width: 60%;
+  max-width: 1200px;
+  height: 80%; /* Adjust the height */
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.close-button {
+  background: #6b00e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto; /* Add scroll for the content */
+  padding-right: 10px; /* Add padding to create space for the scrollbar */
+  flex-grow: 1; /* Make it grow to take available space */
+  box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+.section {
+  background: white; /* White background for inner sections */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* Space between sections */
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  background: white;
+  margin: 0 5px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.stat-item.active {
+  background: #6b00e2;
+  color: white;
+  border: none;
+}
+
+.stat-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 20px;
+  color: inherit;
+}
+
+.chart-container {
+  margin-bottom: 20px;
+}
+
+.chart-image {
+  width: 100%;
+}
+
+.follower-analysis {
+  display: flex;
+  justify-content: space-between;
+}
+
+.analysis-item {
+  flex: 1;
+  text-align: center;
+  background: white;
+  margin: 0 5px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.analysis-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.analysis-value {
+  font-size: 16px;
+}
+
+.content-performance {
+  display: flex; /* Change to flexbox */
+  justify-content: space-between; /* Ensure space between items */
+}
+
+.performance-item {
+  flex: 1;
+  text-align: center;
+  background: white;
+  margin: 0 5px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.performance-metric {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.performance-value {
+  font-size: 16px;
+}
+
+/* 기본 차트 스타일 */
+.chart-container {
+  padding: 20px;
+}
+
+/* stat-item 스타일 */
+.stat-item {
+  flex: 1;
+  text-align: center;
+  background: white;
+  margin: 0 5px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.stat-item.active {
+  background: #6b00e2;
+  color: white;
+  border: none;
+}
+
+/* section 스타일 */
+.section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.follower-analysis, .content-performance {
+  display: flex;
+  justify-content: space-around;
+}

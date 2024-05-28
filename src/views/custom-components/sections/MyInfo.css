@@ -1,0 +1,44 @@
+.my-info-container {
+    padding: 20px;
+}
+
+.my-info-header {
+    margin-bottom: 20px;
+}
+
+.company-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.info-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.info-box button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+.modal-lg {
+    max-width: 600px;
+}

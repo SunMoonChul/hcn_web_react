@@ -1,0 +1,148 @@
+.influencer-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.influencer-row {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.horizontal-item {
+    width: 100%;
+}
+
+.profile-image {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+}
+
+.item-info h5 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.item-info p {
+    margin: 0;
+    color: #777;
+}
+
+.details-button {
+    display: block;
+    margin-top: 10px;
+    background-color: #6200ea;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.item-stats {
+    text-align: right;
+    margin-left: auto;
+}
+
+.stat {
+    margin-left: 20px;
+    text-align: center;
+}
+
+.stat strong {
+    display: block;
+    font-size: 1.2rem;
+}
+
+.stat span {
+    color: #777;
+    display: block;
+}
+
+.item-images {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.additional-image {
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+.item-actions .suggest-button {
+    background-color: #6200ea;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.item-actions .interest-button {
+    background-color: #03dac6;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* 사진 클릭 모달 */
+.click_img .modal-content {
+    background-color: transparent;
+    border: none;
+    max-width: 100%; 
+    margin: auto;
+}
+
+.click_img .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    display: none; 
+}
+
+.click_img .modal-body {
+    padding-top: 0;
+    color: white;
+    font-weight: bold;
+}
+
+.click_img img {
+    max-height: 100vh;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 15px; 
+}
+
+.click_img .modal-footer {
+    justify-content: center; 
+    display: none; 
+}
+
+.modal-backdrop.show {
+    opacity: 0.8; 
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+    flex-direction: row; 
+}
+
