@@ -3,15 +3,18 @@ import axios from 'axios';
 import { Container, Row, Col, Button, Modal, ModalBody } from 'reactstrap';
 import { DataContext } from '../../../context/DataContext';
 import './styles.css';
-import ModalComponent from './ModalComponent';
+import ModalComponent from './ModalComponent'; // 자세히 보기 
+import ContractModal from './ContractModal'; // 간이 계약서
 
 const Buttons = () => {
     const [modal, setModal] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const { data } = useContext(DataContext);
     const [isLoading, setIsLoading] = useState(true);
-    const toggle = () => setModal(!modal);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+    const toggle = () => setModal(!modal);
+    const toggleContractModal = () => setIsContractModalOpen(!isContractModalOpen);
 
     useEffect(() => {
         if (data && data.accounts && data.accounts.length > 0) {
@@ -73,7 +76,7 @@ const Buttons = () => {
             .catch(error => {
                 console.error('There was an error fetching the data!', error);
             });
-    };    
+    };
 
     const handleModalClick = (e) => {
         if (e.target.classList.contains('modal')) {
@@ -142,8 +145,7 @@ const Buttons = () => {
                         </div>
                     </Col>
                     <Col md="3" className="actions-section d-flex flex-column align-items-end">
-                        <Button className="suggest-button mb-2">제안하기</Button>
-                        <Button className="interest-button">관심 있어요</Button>
+                        <Button className="suggest-button mb-2" onClick={toggleContractModal}>제안하기</Button>
                     </Col>
                 </Row>
             ))}
@@ -162,6 +164,8 @@ const Buttons = () => {
                     </ModalBody>
                 </Modal>
             )}
+
+            <ContractModal isOpen={isContractModalOpen} toggle={toggleContractModal} /> {/* 추가된 라인 */}
         </Container>
     );
 };

@@ -47,6 +47,7 @@ const MyInfo = () => {
 
         const formData = new FormData();
         formData.append('file', file);
+        console.log(formData)
         formData.append('userId', loginUser.email);
 
         axios.post('http://localhost:8080/upload', formData)
