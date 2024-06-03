@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert } fro
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+//회원가입
 const PageForm = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -27,19 +28,20 @@ const PageForm = () => {
                 ageGroups,
                 companyName,
                 companyPhone,
-                companyAddress
+                companyAddress,
             };
 
-            axios.post('http://localhost:8080/SignUp', userData)
-                .then(response => {
+            axios
+                .post('http://localhost:8080/SignUp', userData)
+                .then((response) => {
                     console.log(response.data);
                     navigate('/');
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.error('There was an error!', error);
                 });
         } else {
-            alert("Please check the user ID for duplication.");
+            alert('Please check the user ID for duplication.');
         }
     };
 
@@ -49,49 +51,46 @@ const PageForm = () => {
 
     const handleAgeGroupChange = (e) => {
         const value = e.target.value;
-        setAgeGroups(prevState =>
-            prevState.includes(value)
-                ? prevState.filter(ageGroup => ageGroup !== value)
-                : [...prevState, value]
+        setAgeGroups((prevState) =>
+            prevState.includes(value) ? prevState.filter((ageGroup) => ageGroup !== value) : [...prevState, value]
         );
     };
-    
-    
-    
+
     const checkDuplicateUserId = () => {
         if (userId.trim() === '') {
-            setDuplicateMessage("Please enter a user ID.");
+            setDuplicateMessage('Please enter a user ID.');
             setIsDuplicate(true);
             return;
         }
-    
-        axios.get(`http://localhost:8080/duplicationId/${userId}`)
-            .then(response => {
+
+        axios
+            .get(`http://localhost:8080/duplicationId/${userId}`)
+            .then((response) => {
                 if (response.data === 0) {
-                    setDuplicateMessage("User ID is already taken.");
+                    setDuplicateMessage('User ID is already taken.');
                     setIsDuplicate(true);
                 } else if (response.data === 1) {
-                    setDuplicateMessage("User ID is available.");
+                    setDuplicateMessage('User ID is available.');
                     setIsDuplicate(false);
                 } else {
-                    setDuplicateMessage("Unexpected response from server.");
+                    setDuplicateMessage('Unexpected response from server.');
                     setIsDuplicate(true);
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 alert('There was an error: ' + error.message); // 오류 확인 알림
-                setDuplicateMessage("Error checking user ID.");
+                setDuplicateMessage('Error checking user ID.');
                 setIsDuplicate(true);
             });
     };
-    
-    
+
     const testServerSignal = () => {
-        axios.get('http://localhost:8080/testSignal')
-            .then(response => {
+        axios
+            .get('http://localhost:8080/testSignal')
+            .then((response) => {
                 console.log(response.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('There was an error!', error);
             });
     };
@@ -129,8 +128,14 @@ const PageForm = () => {
                                         onChange={(e) => setUserId(e.target.value)}
                                         placeholder="ex) hcn@naver.com"
                                     />
-                                    <Button color="info" onClick={checkDuplicateUserId} style={{ marginTop: '10px' }}>중복 확인</Button>
-                                    {duplicateMessage && <Alert color={isDuplicate ? 'danger' : 'success'} style={{ marginTop: '10px' }}>{duplicateMessage}</Alert>}
+                                    <Button color="info" onClick={checkDuplicateUserId} style={{ marginTop: '10px' }}>
+                                        중복 확인
+                                    </Button>
+                                    {duplicateMessage && (
+                                        <Alert color={isDuplicate ? 'danger' : 'success'} style={{ marginTop: '10px' }}>
+                                            {duplicateMessage}
+                                        </Alert>
+                                    )}
                                 </FormGroup>
                                 <FormGroup>
                                     <Label for="password">비밀번호</Label>
@@ -180,7 +185,7 @@ const PageForm = () => {
                                             <Input
                                                 type="checkbox"
                                                 value="10대"
-                                                checked={ageGroups.includes("10대")}
+                                                checked={ageGroups.includes('10대')}
                                                 onChange={handleAgeGroupChange}
                                             />
                                             10대
@@ -191,7 +196,7 @@ const PageForm = () => {
                                             <Input
                                                 type="checkbox"
                                                 value="20대"
-                                                checked={ageGroups.includes("20대")}
+                                                checked={ageGroups.includes('20대')}
                                                 onChange={handleAgeGroupChange}
                                             />
                                             20대
@@ -202,7 +207,7 @@ const PageForm = () => {
                                             <Input
                                                 type="checkbox"
                                                 value="30대"
-                                                checked={ageGroups.includes("30대")}
+                                                checked={ageGroups.includes('30대')}
                                                 onChange={handleAgeGroupChange}
                                             />
                                             30대
@@ -213,7 +218,7 @@ const PageForm = () => {
                                             <Input
                                                 type="checkbox"
                                                 value="40대"
-                                                checked={ageGroups.includes("40대")}
+                                                checked={ageGroups.includes('40대')}
                                                 onChange={handleAgeGroupChange}
                                             />
                                             40대
@@ -224,7 +229,7 @@ const PageForm = () => {
                                             <Input
                                                 type="checkbox"
                                                 value="50대 이상"
-                                                checked={ageGroups.includes("50대 이상")}
+                                                checked={ageGroups.includes('50대 이상')}
                                                 onChange={handleAgeGroupChange}
                                             />
                                             50대 이상
@@ -262,11 +267,17 @@ const PageForm = () => {
                                     />
                                 </FormGroup>
                                 <div className="button-group">
-                                    <Button color="primary" onClick={handleJoin}>가입하기</Button>
-                                    <Button color="secondary" onClick={handleCancel}>취소</Button>
+                                    <Button color="primary" onClick={handleJoin}>
+                                        가입하기
+                                    </Button>
+                                    <Button color="secondary" onClick={handleCancel}>
+                                        취소
+                                    </Button>
                                 </div>
                             </Form>
-                            <Button color="info" onClick={testServerSignal}>서버 신호 테스트</Button>
+                            <Button color="info" onClick={testServerSignal}>
+                                서버 신호 테스트
+                            </Button>
                         </Col>
                     </Row>
                 </Container>
