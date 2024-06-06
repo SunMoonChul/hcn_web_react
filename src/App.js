@@ -9,12 +9,12 @@ import { DataProvider } from './context/DataContext';
 const App = () => {
     return (
         <DataProvider>
-                <Routes>
-                    <Route path="/custom-components" element={<CustomComponents />} />
-                    <Route path="/" element={<Components />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/my-info" element={<MyInfo />} />
-                </Routes>
+            <Routes>
+                <Route path="/custom-components" element={<CustomComponents />} />
+                <Route path="/" element={<Components />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/my-info" element={<MyInfo />} />
+            </Routes>
         </DataProvider>
     );
 };

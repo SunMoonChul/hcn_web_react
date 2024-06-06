@@ -106,7 +106,9 @@ const ChatList = () => {
             ) : loading ? (
                 <Spinner color="primary" />
             ) : chatsData.length > 0 ? (
-                <ListGroup>{chatsData.map((item) => renderChatListItem(item))}</ListGroup>
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <ListGroup>{chatsData.map((item) => renderChatListItem(item))}</ListGroup>
+                </div>
             ) : (
                 <div className="text-center">
                     <p>채팅 내역이 없습니다</p>

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 
-// core components
 import Header from '../../components/header/header.jsx';
 import HeaderBanner from '../../components/banner/banner.jsx';
 import Footer from '../../components/footer/footer.jsx';
 
-// sections for this page
 import Buttons from './sections/buttons.jsx';
 import ChatList from './sections/Chatlist.jsx';
+
+import { DataContext } from '../../context/DataContext'; // DataContext를 가져옵니다
 
 // 채팅방
 const ChatPage = ({ toggleChat }) => {
@@ -54,6 +54,9 @@ const Components = () => {
     const [showChatPage, setShowChatPage] = useState(false);
     const [currentChat, setCurrentChat] = useState(null);
 
+    const { data } = useContext(DataContext); // DataContext에서 데이터를 가져옵니다
+    const { loginUser } = data || {}; // loginUser를 가져옵니다
+
     const toggleChatPage = () => {
         console.log('Chat page visibility:', !showChatPage); // 토글 상태 로그
         setShowChatPage(!showChatPage);
@@ -70,7 +73,7 @@ const Components = () => {
             <div className="page-wrapper">
                 <div className="container-fluid">
                     <HeaderBanner />
-                    <Buttons />
+                    <Buttons userId={loginUser?.email} /> {/* userId를 Buttons 컴포넌트로 전달 */}
                     <button className="fixed-chat-button" onClick={toggleChatPage}>
                         채팅창 이동
                     </button>

@@ -1,5 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap';
+import {
+    Container,
+    Row,
+    Col,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+} from 'reactstrap';
 import axios from 'axios';
 import { DataContext } from '../../../context/DataContext';
 import './MyInfo.css'; // Custom CSS file for additional styling
@@ -15,13 +28,14 @@ const MyInfo = () => {
 
     useEffect(() => {
         if (loginUser && loginUser.email) {
-            axios.get(`http://localhost:8080/user/${loginUser.email}`) // user_id를 email로 사용
-                .then(response => {
+            axios
+                .get(`http://localhost:8080/user/${loginUser.email}`) // user_id를 email로 사용
+                .then((response) => {
                     setInfo(response.data);
                     console.log(response.data);
                 })
-                .catch(error => {
-                    console.error("There was an error fetching the user data!", error);
+                .catch((error) => {
+                    console.error('There was an error fetching the user data!', error);
                 });
         }
     }, [loginUser]);
@@ -35,7 +49,7 @@ const MyInfo = () => {
         const { name, value } = e.target;
         setInfo({
             ...info,
-            [name]: value
+            [name]: value,
         });
     };
 
@@ -47,36 +61,39 @@ const MyInfo = () => {
 
         const formData = new FormData();
         formData.append('file', file);
+        console.log(formData);
         formData.append('userId', loginUser.email);
 
-        axios.post('http://localhost:8080/upload', formData)
-            .then(response => {
+        axios
+            .post('http://localhost:8080/upload', formData)
+            .then((response) => {
                 console.log(response.data);
                 setInfo({
                     ...info,
-                    profileImageUrl: response.data // 응답으로 받은 파일 이름 설정
+                    profileImageUrl: response.data, // 응답으로 받은 파일 이름 설정
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('There was an error uploading the file!', error);
             });
     };
 
     const handleSave = () => {
-        axios.post('http://localhost:8080/update', info)
-            .then(response => {
+        axios
+            .post('http://localhost:8080/update', info)
+            .then((response) => {
                 setInfo(response.data);
                 setModal(false);
             })
-            .catch(error => {
-                console.error("There was an error updating the user data!", error);
+            .catch((error) => {
+                console.error('There was an error updating the user data!', error);
             });
     };
 
     const handleFieldChange = (e) => {
         setInfo({
             ...info,
-            category: e.target.value
+            category: e.target.value,
         });
     };
 
@@ -109,7 +126,8 @@ const MyInfo = () => {
                             <img
                                 src={`http://localhost:8080/uploads/${info.profileImageUrl}?${new Date().getTime()}`}
                                 alt="Company"
-                                className="company-image" />
+                                className="company-image"
+                            />
                             <input
                                 type="file"
                                 id="fileUpload"
@@ -125,13 +143,20 @@ const MyInfo = () => {
                     <div className="info-section">
                         <div className="info-box">
                             <h2>회사 사이트</h2>
-                            <a href={info.websiteUrl || '#'} target="_blank" rel="noopener noreferrer">{info.websiteUrl || 'N/A'}</a>
+                            <a href={info.websiteUrl || '#'} target="_blank" rel="noopener noreferrer">
+                                {info.websiteUrl || 'N/A'}
+                            </a>
                         </div>
                     </div>
                     <div className="info-section">
                         <div className="info-box">
                             <h2>회사 소개</h2>
-                            <p>{info.companyDescription || 'N/A'} <Button size="sm" onClick={() => toggleModal('companyDescription')}>수정</Button></p>
+                            <p>
+                                {info.companyDescription || 'N/A'}{' '}
+                                <Button size="sm" onClick={() => toggleModal('companyDescription')}>
+                                    수정
+                                </Button>
+                            </p>
                         </div>
                     </div>
                 </Col>
@@ -158,39 +183,70 @@ const MyInfo = () => {
                         <div className="info-box">
                             <h2>보유 포인트</h2>
                             <p>{info.points.toLocaleString()} points</p>
-                            <Button size="sm" className="mr-2">충전</Button>
+                            <Button size="sm" className="mr-2">
+                                충전
+                            </Button>
                             <Button size="sm">환전</Button>
                         </div>
                     </div>
                     <div className="info-section">
                         <div className="info-box">
                             <h2>선호 분야</h2>
-                            <p>{info.category} <Button size="sm" onClick={() => toggleModal('category')}>수정</Button></p>
+                            <p>
+                                {info.category}{' '}
+                                <Button size="sm" onClick={() => toggleModal('category')}>
+                                    수정
+                                </Button>
+                            </p>
                         </div>
                     </div>
                     <div className="info-section">
                         <div className="info-box">
                             <h2>광고 선호 연령대</h2>
-                            <p>{info.ageGroups.join(', ')} <Button size="sm" onClick={() => toggleModal('ageGroups')}>수정</Button></p>
+                            <p>
+                                {info.ageGroups.join(', ')}{' '}
+                                <Button size="sm" onClick={() => toggleModal('ageGroups')}>
+                                    수정
+                                </Button>
+                            </p>
                         </div>
                     </div>
                 </Col>
             </Row>
 
             <Modal isOpen={modal} toggle={() => setModal(!modal)} size="lg">
-                <ModalHeader toggle={() => setModal(!modal)}>수정 {editField === 'companyDescription' ? '회사 소개' : editField === 'category' ? '선호 분야' : '광고 선호 연령대'}</ModalHeader>
+                <ModalHeader toggle={() => setModal(!modal)}>
+                    수정{' '}
+                    {editField === 'companyDescription'
+                        ? '회사 소개'
+                        : editField === 'category'
+                        ? '선호 분야'
+                        : '광고 선호 연령대'}
+                </ModalHeader>
                 <ModalBody>
                     <Form>
                         {editField === 'companyDescription' && (
                             <FormGroup>
                                 <Label for="companyDescription">수정 회사 소개</Label>
-                                <Input type="text" name="companyDescription" id="companyDescription" value={info.companyDescription || ''} onChange={handleChange} />
+                                <Input
+                                    type="text"
+                                    name="companyDescription"
+                                    id="companyDescription"
+                                    value={info.companyDescription || ''}
+                                    onChange={handleChange}
+                                />
                             </FormGroup>
                         )}
                         {editField === 'category' && (
                             <FormGroup>
                                 <Label for="category">선호 분야 선택</Label>
-                                <Input type="select" name="category" id="category" value={info.category} onChange={handleFieldChange}>
+                                <Input
+                                    type="select"
+                                    name="category"
+                                    id="category"
+                                    value={info.category}
+                                    onChange={handleFieldChange}
+                                >
                                     <option>패션</option>
                                     <option>뷰티</option>
                                     <option>스포츠</option>
@@ -207,19 +263,58 @@ const MyInfo = () => {
                             <FormGroup>
                                 <Label>광고 선호 연령대 선택</Label>
                                 <div>
-                                    <Input type="checkbox" id="ageGroup1" value="10대" checked={info.ageGroups.includes('10대')} onChange={handleAgeGroupChange} /> 10대
-                                    <Input type="checkbox" id="ageGroup2" value="20대" checked={info.ageGroups.includes('20대')} onChange={handleAgeGroupChange} /> 20대
-                                    <Input type="checkbox" id="ageGroup3" value="30대" checked={info.ageGroups.includes('30대')} onChange={handleAgeGroupChange} /> 30대
-                                    <Input type="checkbox" id="ageGroup4" value="40대" checked={info.ageGroups.includes('40대')} onChange={handleAgeGroupChange} /> 40대
-                                    <Input type="checkbox" id="ageGroup5" value="50대 이상" checked={info.ageGroups.includes('50대 이상')} onChange={handleAgeGroupChange} /> 50대 이상
+                                    <Input
+                                        type="checkbox"
+                                        id="ageGroup1"
+                                        value="10대"
+                                        checked={info.ageGroups.includes('10대')}
+                                        onChange={handleAgeGroupChange}
+                                    />{' '}
+                                    10대
+                                    <Input
+                                        type="checkbox"
+                                        id="ageGroup2"
+                                        value="20대"
+                                        checked={info.ageGroups.includes('20대')}
+                                        onChange={handleAgeGroupChange}
+                                    />{' '}
+                                    20대
+                                    <Input
+                                        type="checkbox"
+                                        id="ageGroup3"
+                                        value="30대"
+                                        checked={info.ageGroups.includes('30대')}
+                                        onChange={handleAgeGroupChange}
+                                    />{' '}
+                                    30대
+                                    <Input
+                                        type="checkbox"
+                                        id="ageGroup4"
+                                        value="40대"
+                                        checked={info.ageGroups.includes('40대')}
+                                        onChange={handleAgeGroupChange}
+                                    />{' '}
+                                    40대
+                                    <Input
+                                        type="checkbox"
+                                        id="ageGroup5"
+                                        value="50대 이상"
+                                        checked={info.ageGroups.includes('50대 이상')}
+                                        onChange={handleAgeGroupChange}
+                                    />{' '}
+                                    50대 이상
                                 </div>
                             </FormGroup>
                         )}
                     </Form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={handleSave}>저장</Button>
-                    <Button color="secondary" onClick={() => setModal(false)}>취소</Button>
+                    <Button color="primary" onClick={handleSave}>
+                        저장
+                    </Button>
+                    <Button color="secondary" onClick={() => setModal(false)}>
+                        취소
+                    </Button>
                 </ModalFooter>
             </Modal>
         </Container>

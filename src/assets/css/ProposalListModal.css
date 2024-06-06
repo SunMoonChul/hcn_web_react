@@ -1,0 +1,29 @@
+.proposal-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.proposal-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.proposal-image {
+    width: 100px; /* 원하는 너비로 설정 */
+    height: auto; /* 비율을 유지하며 높이를 자동으로 설정 */
+    margin-right: 10px; /* 이미지와 텍스트 사이의 간격 조정 */
+    object-fit: cover; /* 이미지가 잘리지 않고 영역에 맞게 조정되도록 설정 */
+}
+
+.proposal-details {
+    font-size: 14px;
+}
