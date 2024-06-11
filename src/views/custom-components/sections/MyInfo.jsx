@@ -47,7 +47,6 @@ const MyInfo = () => {
 
         const formData = new FormData();
         formData.append('file', file);
-        console.log(formData)
         formData.append('userId', loginUser.email);
 
         axios.post('http://localhost:8080/upload', formData)
@@ -82,13 +81,18 @@ const MyInfo = () => {
     };
 
     const handleAgeGroupChange = (e) => {
-        const { value, checked } = e.target;
-        setInfo((prevState) => {
-            if (checked) {
-                return { ...prevState, ageGroups: [...prevState.ageGroups, value] };
-            } else {
-                return { ...prevState, ageGroups: prevState.ageGroups.filter((age) => age !== value) };
-            }
+        const { value } = e.target;
+        setInfo({
+            ...info,
+            ageGroup: value
+        });
+    };
+
+    const handleGenderChange = (e) => {
+        const { value } = e.target;
+        setInfo({
+            ...info,
+            desiredGender: value
         });
     };
 
@@ -172,14 +176,20 @@ const MyInfo = () => {
                     <div className="info-section">
                         <div className="info-box">
                             <h2>광고 선호 연령대</h2>
-                            <p>{info.ageGroups.join(', ')} <Button size="sm" onClick={() => toggleModal('ageGroups')}>수정</Button></p>
+                            <p>{info.ageGroup} <Button size="sm" onClick={() => toggleModal('ageGroup')}>수정</Button></p>
+                        </div>
+                    </div>
+                    <div className="info-section">
+                        <div className="info-box">
+                            <h2>원하는 성별</h2>
+                            <p>{info.desiredGender} <Button size="sm" onClick={() => toggleModal('desiredGender')}>수정</Button></p>
                         </div>
                     </div>
                 </Col>
             </Row>
 
             <Modal isOpen={modal} toggle={() => setModal(!modal)} size="lg">
-                <ModalHeader toggle={() => setModal(!modal)}>수정 {editField === 'companyDescription' ? '회사 소개' : editField === 'category' ? '선호 분야' : '광고 선호 연령대'}</ModalHeader>
+                <ModalHeader toggle={() => setModal(!modal)}>수정 {editField === 'companyDescription' ? '회사 소개' : editField === 'category' ? '선호 분야' : editField === 'ageGroup' ? '광고 선호 연령대' : '원하는 성별'}</ModalHeader>
                 <ModalBody>
                     <Form>
                         {editField === 'companyDescription' && (
@@ -204,16 +214,30 @@ const MyInfo = () => {
                                 </Input>
                             </FormGroup>
                         )}
-                        {editField === 'ageGroups' && (
+                        {editField === 'ageGroup' && (
                             <FormGroup>
-                                <Label>광고 선호 연령대 선택</Label>
-                                <div>
-                                    <Input type="checkbox" id="ageGroup1" value="10대" checked={info.ageGroups.includes('10대')} onChange={handleAgeGroupChange} /> 10대
-                                    <Input type="checkbox" id="ageGroup2" value="20대" checked={info.ageGroups.includes('20대')} onChange={handleAgeGroupChange} /> 20대
-                                    <Input type="checkbox" id="ageGroup3" value="30대" checked={info.ageGroups.includes('30대')} onChange={handleAgeGroupChange} /> 30대
-                                    <Input type="checkbox" id="ageGroup4" value="40대" checked={info.ageGroups.includes('40대')} onChange={handleAgeGroupChange} /> 40대
-                                    <Input type="checkbox" id="ageGroup5" value="50대 이상" checked={info.ageGroups.includes('50대 이상')} onChange={handleAgeGroupChange} /> 50대 이상
-                                </div>
+                                <Label for="ageGroup">광고 선호 연령대 선택</Label>
+                                <Input type="select" name="ageGroup" id="ageGroup" value={info.ageGroup} onChange={handleAgeGroupChange}>
+                                    <option value="">선택하세요</option>
+                                    <option value="13-17">13-17</option>
+                                    <option value="18-24">18-24</option>
+                                    <option value="25-34">25-34</option>
+                                    <option value="35-44">35-44</option>
+                                    <option value="45-54">45-54</option>
+                                    <option value="55-64">55-64</option>
+                                    <option value="65+">65+</option>
+                                </Input>
+                            </FormGroup>
+                        )}
+                        {editField === 'desiredGender' && (
+                            <FormGroup>
+                                <Label for="desiredGender">원하는 성별 선택</Label>
+                                <Input type="select" name="desiredGender" id="desiredGender" value={info.desiredGender} onChange={handleGenderChange}>
+                                    <option value="">선택하세요</option>
+                                    <option value="남성">남성</option>
+                                    <option value="여성">여성</option>
+                                    <option value="상관 없음">상관 없음</option>
+                                </Input>
                             </FormGroup>
                         )}
                     </Form>

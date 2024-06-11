@@ -13,43 +13,59 @@ const Buttons = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+    const [sortedItems, setSortedItems] = useState([]);
+    const [sortType, setSortType] = useState('추천순'); // Default sort type
     const toggle = () => setModal(!modal);
     const toggleContractModal = () => setIsContractModalOpen(!isContractModalOpen);
 
     useEffect(() => {
         if (data && data.accounts && data.accounts.length > 0) {
+            const items = processItems(data.accounts);
+            setSortedItems(items);
             setIsLoading(false);
         }
     }, [data]);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    const processItems = (accounts) => {
+        return (accounts || []).map(account => {
+            const totalLikes = account.posts.reduce((acc, post) => acc + post.likes, 0);
+            const totalComments = account.posts.reduce((acc, post) => acc + post.comments.length, 0);
+            const postCount = account.posts.length;
 
-    const items = (data.accounts || []).map(account => {
-        const totalLikes = account.posts.reduce((acc, post) => acc + post.likes, 0);
-        const totalComments = account.posts.reduce((acc, post) => acc + post.comments.length, 0);
-        const postCount = account.posts.length;
+            const averageLikes = postCount ? Math.ceil(totalLikes / postCount) : 0;
+            const averageComments = postCount ? Math.ceil(totalComments / postCount) : 0;
 
-        const averageLikes = postCount ? Math.ceil(totalLikes / postCount) : 0;
-        const averageComments = postCount ? Math.ceil(totalComments / postCount) : 0;
+            const sortedPosts = account.posts.sort((a, b) => new Date(b.post_time) - new Date(a.post_time));
+            const images = sortedPosts.slice(0, 6).map(post => post.image_urls.length > 0 ? `http://localhost:8080/uploads/${post.image_urls[0]}` : '');
 
-        const sortedPosts = account.posts.sort((a, b) => new Date(b.post_time) - new Date(a.post_time));
-        const images = sortedPosts.slice(0, 6).map(post => post.image_urls.length > 0 ? `http://localhost:8080/uploads/${post.image_urls[0]}` : '');
+            return {
+                id: `Account ${account.account_id}`,
+                profileImage: `http://localhost:8080/uploads/${account.profile_image}`,
+                name: account.username,
+                category: account.category,
+                followers: account.followers,
+                likes: averageLikes,
+                comments: averageComments,
+                profileViews: account.profile_views,
+                images: images,
+                posts: sortedPosts,
+            };
+        });
+    };
 
-        return {
-            id: `Account ${account.account_id}`,
-            profileImage: `http://localhost:8080/uploads/${account.profile_image}`,
-            name: account.username,
-            category: account.category.join(', '),
-            followers: account.followers,
-            likes: averageLikes,
-            comments: averageComments,
-            profileViews: account.profile_views,
-            images: images,
-            posts: sortedPosts,
-        };
-    });
+    const handleSort = (type) => {
+        let sorted = [...sortedItems];
+        if (type === '팔로워순') {
+            sorted = sorted.sort((a, b) => b.followers - a.followers);
+        } else if (type === '좋아요순') {
+            sorted = sorted.sort((a, b) => b.likes - a.likes);
+        } else {
+            // 추천순 (기본 정렬 로직 적용)
+            sorted = processItems(data.accounts);
+        }
+        setSortedItems(sorted);
+        setSortType(type);
+    };
 
     const imgClick = (post) => {
         setCurrentItem(post);
@@ -84,9 +100,18 @@ const Buttons = () => {
         }
     };
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Container className="influencer-container">
-            {items.map((item) => (
+            <div className="sort-buttons">
+                <Button onClick={() => handleSort('추천순')} className={sortType === '추천순' ? 'active' : ''}>추천순</Button>
+                <Button onClick={() => handleSort('팔로워순')} className={sortType === '팔로워순' ? 'active' : ''}>팔로워순</Button>
+                <Button onClick={() => handleSort('좋아요순')} className={sortType === '좋아요순' ? 'active' : ''}>좋아요순</Button>
+            </div>
+            {sortedItems.map((item) => (
                 <Row key={item.id} className="mb-5 influencer-row">
                     <Col md="3" className="profile-section">
                         <div className="d-flex align-items-center">

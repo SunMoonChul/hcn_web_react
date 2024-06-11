@@ -10,7 +10,8 @@ const PageForm = () => {
     const [password, setPassword] = useState('');
     const [passwordch, setPasswordch] = useState('');
     const [category, setCategory] = useState('');
-    const [ageGroups, setAgeGroups] = useState([]);
+    const [ageGroup, setAgeGroup] = useState('');
+    const [gender, setGender] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [companyPhone, setCompanyPhone] = useState('');
     const [companyAddress, setCompanyAddress] = useState('');
@@ -24,7 +25,8 @@ const PageForm = () => {
                 userId,
                 password,
                 category,
-                ageGroups,
+                ageGroup,
+                gender,
                 companyName,
                 companyPhone,
                 companyAddress
@@ -47,24 +49,13 @@ const PageForm = () => {
         navigate('/');
     };
 
-    const handleAgeGroupChange = (e) => {
-        const value = e.target.value;
-        setAgeGroups(prevState =>
-            prevState.includes(value)
-                ? prevState.filter(ageGroup => ageGroup !== value)
-                : [...prevState, value]
-        );
-    };
-    
-    
-    
     const checkDuplicateUserId = () => {
         if (userId.trim() === '') {
             setDuplicateMessage("Please enter a user ID.");
             setIsDuplicate(true);
             return;
         }
-    
+
         axios.get(`http://localhost:8080/duplicationId/${userId}`)
             .then(response => {
                 if (response.data === 0) {
@@ -79,13 +70,12 @@ const PageForm = () => {
                 }
             })
             .catch(error => {
-                alert('There was an error: ' + error.message); // 오류 확인 알림
+                alert('There was an error: ' + error.message);
                 setDuplicateMessage("Error checking user ID.");
                 setIsDuplicate(true);
             });
     };
-    
-    
+
     const testServerSignal = () => {
         axios.get('http://localhost:8080/testSignal')
             .then(response => {
@@ -174,62 +164,38 @@ const PageForm = () => {
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label>선호 연령대 선택</Label>
-                                    <div className="form-check">
-                                        <Label check>
-                                            <Input
-                                                type="checkbox"
-                                                value="10대"
-                                                checked={ageGroups.includes("10대")}
-                                                onChange={handleAgeGroupChange}
-                                            />
-                                            10대
-                                        </Label>
-                                    </div>
-                                    <div className="form-check">
-                                        <Label check>
-                                            <Input
-                                                type="checkbox"
-                                                value="20대"
-                                                checked={ageGroups.includes("20대")}
-                                                onChange={handleAgeGroupChange}
-                                            />
-                                            20대
-                                        </Label>
-                                    </div>
-                                    <div className="form-check">
-                                        <Label check>
-                                            <Input
-                                                type="checkbox"
-                                                value="30대"
-                                                checked={ageGroups.includes("30대")}
-                                                onChange={handleAgeGroupChange}
-                                            />
-                                            30대
-                                        </Label>
-                                    </div>
-                                    <div className="form-check">
-                                        <Label check>
-                                            <Input
-                                                type="checkbox"
-                                                value="40대"
-                                                checked={ageGroups.includes("40대")}
-                                                onChange={handleAgeGroupChange}
-                                            />
-                                            40대
-                                        </Label>
-                                    </div>
-                                    <div className="form-check">
-                                        <Label check>
-                                            <Input
-                                                type="checkbox"
-                                                value="50대 이상"
-                                                checked={ageGroups.includes("50대 이상")}
-                                                onChange={handleAgeGroupChange}
-                                            />
-                                            50대 이상
-                                        </Label>
-                                    </div>
+                                    <Label for="ageGroup">선호 연령대 선택</Label>
+                                    <Input
+                                        type="select"
+                                        name="ageGroup"
+                                        id="ageGroup"
+                                        value={ageGroup}
+                                        onChange={(e) => setAgeGroup(e.target.value)}
+                                    >
+                                        <option value="">선택하세요</option>
+                                        <option value="13-17">13-17</option>
+                                        <option value="18-24">18-24</option>
+                                        <option value="25-34">25-34</option>
+                                        <option value="35-44">35-44</option>
+                                        <option value="45-54">45-54</option>
+                                        <option value="55-64">55-64</option>
+                                        <option value="65+">65+</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="gender">원하는 성별</Label>
+                                    <Input
+                                        type="select"
+                                        name="gender"
+                                        id="gender"
+                                        value={gender}
+                                        onChange={(e) => setGender(e.target.value)}
+                                    >
+                                        <option value="">선택하세요</option>
+                                        <option value="남성">남성</option>
+                                        <option value="여성">여성</option>
+                                        <option value="상관 없음">상관 없음</option>
+                                    </Input>
                                 </FormGroup>
                                 <FormGroup>
                                     <Label for="companyName">회사 이름</Label>

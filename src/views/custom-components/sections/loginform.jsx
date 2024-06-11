@@ -18,7 +18,7 @@ const LoginForm = () => {
         event.preventDefault();
 
         const loginData = {
-            email,
+            email, // email로 변경
             password
         };
 
