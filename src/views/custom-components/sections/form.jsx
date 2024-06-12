@@ -11,12 +11,13 @@ const PageForm = () => {
     const [passwordch, setPasswordch] = useState('');
     const [category, setCategory] = useState('');
     const [ageGroup, setAgeGroup] = useState('');
-    const [gender, setGender] = useState('');
+    const [desiredGender, setDesiredGender] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [companyPhone, setCompanyPhone] = useState('');
     const [companyAddress, setCompanyAddress] = useState('');
     const [isDuplicate, setIsDuplicate] = useState(null);
     const [duplicateMessage, setDuplicateMessage] = useState('');
+    const [websiteUrl, setWebsiteUrl] = useState('');
 
     const handleJoin = () => {
         if (isDuplicate === false) {
@@ -26,10 +27,11 @@ const PageForm = () => {
                 password,
                 category,
                 ageGroup,
-                gender,
+                desiredGender,
                 companyName,
                 companyPhone,
-                companyAddress
+                companyAddress,
+                websiteUrl
             };
 
             axios.post('http://localhost:8080/SignUp', userData)
@@ -186,10 +188,10 @@ const PageForm = () => {
                                     <Label for="gender">원하는 성별</Label>
                                     <Input
                                         type="select"
-                                        name="gender"
-                                        id="gender"
-                                        value={gender}
-                                        onChange={(e) => setGender(e.target.value)}
+                                        name="desiredGender"
+                                        id="desiredGender"
+                                        value={desiredGender}
+                                        onChange={(e) => setDesiredGender(e.target.value)}
                                     >
                                         <option value="">선택하세요</option>
                                         <option value="남성">남성</option>
@@ -225,6 +227,16 @@ const PageForm = () => {
                                         id="companyAddress"
                                         value={companyAddress}
                                         onChange={(e) => setCompanyAddress(e.target.value)}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="companyAddress">회사 웹사이트</Label>
+                                    <Input
+                                        type="text"
+                                        name="websiteUrl"
+                                        id="websiteUrl"
+                                        value={websiteUrl}
+                                        onChange={(e) => setWebsiteUrl(e.target.value)}
                                     />
                                 </FormGroup>
                                 <div className="button-group">

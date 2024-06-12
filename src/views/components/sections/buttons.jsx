@@ -20,8 +20,7 @@ const Buttons = () => {
 
     useEffect(() => {
         if (data && data.accounts && data.accounts.length > 0) {
-            const items = processItems(data.accounts);
-            setSortedItems(items);
+            handleSort(sortType); // 기본 정렬을 처리
             setIsLoading(false);
         }
     }, [data]);
@@ -54,14 +53,16 @@ const Buttons = () => {
     };
 
     const handleSort = (type) => {
-        let sorted = [...sortedItems];
+        let sorted = [];
         if (type === '팔로워순') {
-            sorted = sorted.sort((a, b) => b.followers - a.followers);
+            sorted = processItems(data.accounts).sort((a, b) => b.followers - a.followers);
         } else if (type === '좋아요순') {
-            sorted = sorted.sort((a, b) => b.likes - a.likes);
-        } else {
-            // 추천순 (기본 정렬 로직 적용)
-            sorted = processItems(data.accounts);
+            sorted = processItems(data.accounts).sort((a, b) => b.likes - a.likes);
+        } else if (type === '추천순') {
+            // 추천순일 경우 recommend 데이터와 대조하여 일치하는 리스트만 필터링 및 정렬
+            const recommendMap = new Map(data.recommend.map(item => [Object.keys(item)[0], Object.values(item)[0]]));
+            sorted = processItems(data.accounts).filter(account => recommendMap.has(account.name))
+                .sort((a, b) => recommendMap.get(b.name) - recommendMap.get(a.name));
         }
         setSortedItems(sorted);
         setSortType(type);
