@@ -25,6 +25,8 @@ const MyInfo = () => {
     const [editField, setEditField] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState('');
+    const [chargeModal, setChargeModal] = useState(false); // 금액 충전 모달 상태
+    const [chargeAmount, setChargeAmount] = useState(0); // 충전할 금액
 
     useEffect(() => {
         if (loginUser && loginUser.email) {
@@ -43,6 +45,10 @@ const MyInfo = () => {
     const toggleModal = (field) => {
         setEditField(field);
         setModal(!modal);
+    };
+
+    const toggleChargeModal = () => {
+        setChargeModal(!chargeModal);
     };
 
     const handleChange = (e) => {
@@ -106,6 +112,18 @@ const MyInfo = () => {
                 return { ...prevState, ageGroups: prevState.ageGroups.filter((age) => age !== value) };
             }
         });
+    };
+
+    const handleCharge = () => {
+        axios
+            .post('http://localhost:8080/charge', { userId: loginUser.email, amount: chargeAmount })
+            .then((response) => {
+                setInfo(response.data);
+                setChargeModal(false);
+            })
+            .catch((error) => {
+                console.error('There was an error charging the points!', error);
+            });
     };
 
     if (!info) {
@@ -183,7 +201,7 @@ const MyInfo = () => {
                         <div className="info-box">
                             <h2>보유 포인트</h2>
                             <p>{info.points.toLocaleString()} points</p>
-                            <Button size="sm" className="mr-2">
+                            <Button size="sm" className="mr-2" onClick={toggleChargeModal}>
                                 충전
                             </Button>
                             <Button size="sm">환전</Button>
@@ -313,6 +331,32 @@ const MyInfo = () => {
                         저장
                     </Button>
                     <Button color="secondary" onClick={() => setModal(false)}>
+                        취소
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+            <Modal isOpen={chargeModal} toggle={toggleChargeModal}>
+                <ModalHeader toggle={toggleChargeModal}>금액 충전</ModalHeader>
+                <ModalBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="chargeAmount">충전할 금액</Label>
+                            <Input
+                                type="number"
+                                name="chargeAmount"
+                                id="chargeAmount"
+                                value={chargeAmount}
+                                onChange={(e) => setChargeAmount(Number(e.target.value))}
+                            />
+                        </FormGroup>
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={handleCharge}>
+                        충전
+                    </Button>
+                    <Button color="secondary" onClick={toggleChargeModal}>
                         취소
                     </Button>
                 </ModalFooter>

@@ -15,7 +15,9 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 .then((data) => {
                     console.log('Fetched proposals:', data);
                     if (Array.isArray(data)) {
-                        setProposals(data);
+                        // 제안서를 최신순으로 정렬합니다.
+                        const sortedProposals = data.sort((a, b) => new Date(b.time) - new Date(a.time));
+                        setProposals(sortedProposals);
                     } else {
                         setProposals([]);
                     }
@@ -28,6 +30,7 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
     }, [isOpen, userId]);
 
     const toggleContractModal = () => setIsContractModalOpen(!isContractModalOpen);
+
     const refreshProposals = () => {
         if (userId) {
             fetch(`http://localhost:8080/api/proposals/byUserId/${userId}`)
@@ -35,7 +38,9 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 .then((data) => {
                     console.log('Fetched proposals:', data);
                     if (Array.isArray(data)) {
-                        setProposals(data);
+                        // 제안서를 최신순으로 정렬합니다.
+                        const sortedProposals = data.sort((a, b) => new Date(b.time) - new Date(a.time));
+                        setProposals(sortedProposals);
                     } else {
                         setProposals([]);
                     }
@@ -60,6 +65,9 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
     const handleProposalClick = async (proposal) => {
         try {
             const response = await fetch(`http://localhost:8080/uploads/${proposal.photoUrl}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             const blob = await response.blob();
             const photoFile = new File([blob], proposal.photoUrl.split('/').pop(), { type: blob.type });
 
@@ -79,6 +87,9 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 method: 'POST',
                 body: formData,
             });
+            if (!sendResponse.ok) {
+                throw new Error('Network response was not ok');
+            }
             const data = await sendResponse.json();
             console.log('Proposal sent:', data);
             toggle(); // 모달을 닫습니다.
@@ -87,7 +98,8 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
         }
     };
 
-    const handleEditClick = (proposal) => {
+    const handleEditClick = (proposal, e) => {
+        e.stopPropagation();
         setCurrentProposal(proposal);
         setIsContractModalOpen(true);
     };
@@ -103,23 +115,18 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                                 <ListGroupItem
                                     key={proposal.id}
                                     style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
+                                    onClick={() => handleProposalClick(proposal)}
                                 >
-                                    <div onClick={() => handleProposalClick(proposal)}>
+                                    <div>
                                         <img
                                             src={`http://localhost:8080/uploads/${proposal.photoUrl}`}
                                             alt={proposal.goodName}
                                             className="proposal-image"
                                         />
-                                        이름 : {proposal.goodName}
+                                        <div>이름: {proposal.goodName}</div>
                                         <div className="proposal-time">작성 시간: {proposal.time}</div>
                                     </div>
-                                    <Button
-                                        color="secondary"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleEditClick(proposal);
-                                        }}
-                                    >
+                                    <Button color="secondary" onClick={(e) => handleEditClick(proposal, e)}>
                                         수정하기
                                     </Button>
                                 </ListGroupItem>
@@ -150,7 +157,7 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 toggle={toggleContractModal}
                 email={userId}
                 refreshProposals={refreshProposals}
-                initialProposal={currentProposal} // 수정할 제안서 정보를 넘겨줍니다.
+                initialProposal={currentProposal}
             />
         </>
     );

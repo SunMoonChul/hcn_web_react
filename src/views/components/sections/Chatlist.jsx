@@ -57,7 +57,8 @@ const ChatList = () => {
             .then((response) => response.json())
             .then((data) => {
                 console.log(`fetchChats - data: ${JSON.stringify(data)}`);
-                setChatsData(data);
+                const sortedChats = data.sort((a, b) => new Date(b.time) - new Date(a.time));
+                setChatsData(sortedChats);
                 setLoading(false);
             })
             .catch((error) => {
@@ -66,28 +67,31 @@ const ChatList = () => {
             });
     };
 
-    const handleItemPress = (chatId, otherUserId) => {
-        setCurrentChat({ chatId, otherUserId });
+    const handleItemPress = (chatId, otherUserId, allPoints, sendedPoints) => {
+        setCurrentChat({ chatId, otherUserId, allPoints, sendedPoints });
     };
 
     const renderChatListItem = (item) => {
         console.log(`renderChatListItem - item: ${JSON.stringify(item)}`);
-        const otherUserId = item.fromId === loginUser?.email ? item.toId : item.fromId;
+        const otherUserId = item.from_id === loginUser?.email ? item.to_id : item.from_id;
 
         console.log(
-            `renderChatListItem - chatid: ${item.id}, otherUserId: ${otherUserId}, last_message: ${item.lastMessage}, chattime: ${item.time}`
+            `renderChatListItem - chatid: ${item.id}, otherUserId: ${otherUserId}, last_message: ${item.last_message}, chattime: ${item.time}`
         );
 
         return (
             <ListGroupItem
                 key={item.id}
                 className="d-flex justify-content-between align-items-center"
-                onClick={() => handleItemPress(item.id, otherUserId)}
+                onClick={() => handleItemPress(item.id, otherUserId, item.all_points, item.sended_points)}
                 style={{ marginBottom: '5px' }}
             >
                 <div>
                     <strong>상대방 ID: {otherUserId}</strong>
-                    <p>최근 메시지: {item.lastMessage}</p>
+                    <p>최근 메시지: {item.last_message}</p>
+                    <p>
+                        총 금액: {item.all_points} 보낸 금액 : {item.sended_points}
+                    </p>
                     <small>{new Date(item.time).toLocaleString()}</small>
                 </div>
             </ListGroupItem>
@@ -101,6 +105,8 @@ const ChatList = () => {
                     chatId={currentChat.chatId}
                     otherUserId={currentChat.otherUserId}
                     loginUserId={loginUser?.email}
+                    allPoints={currentChat.allPoints}
+                    sendedPoints={currentChat.sendedPoints}
                     goBack={() => setCurrentChat(null)}
                 />
             ) : loading ? (

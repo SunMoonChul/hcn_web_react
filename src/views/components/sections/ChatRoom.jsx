@@ -2,11 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Container, Button, Input, InputGroup, InputGroupText } from 'reactstrap';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import SendPointsModal from './SendPointsModal';
+import EditProposalModal from './EditProposalModal';
 
-const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
+const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedPoints }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [photo, setPhoto] = useState(null);
     const [proposals, setProposals] = useState([]);
+    const [isSendPointsModalOpen, setIsSendPointsModalOpen] = useState(false);
+    const [isEditProposalModalOpen, setIsEditProposalModalOpen] = useState(false);
+    const [currentProposal, setCurrentProposal] = useState(null);
     const stompClient = useRef(null);
     const messagesEndRef = useRef(null);
 
@@ -87,39 +93,94 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
     };
 
     const handleSend = () => {
-        if (message.trim() !== '') {
-            const newMessage = {
+        const formData = new FormData();
+        formData.append('headerId', chatId);
+        formData.append('fromId', loginUserId);
+        formData.append('toId', otherUserId);
+        formData.append('messageType', photo ? true : false);
+        formData.append('time', formatDate(new Date()));
+
+        if (photo) {
+            formData.append('photo', photo);
+        } else {
+            formData.append('content', message.trim());
+        }
+
+        setMessage('');
+        setPhoto(null);
+
+        fetch('http://localhost:8080/api/messages', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Message sent:', data);
+                stompClient.current.publish({
+                    destination: `/app/chat/${chatId}`,
+                    body: JSON.stringify(data),
+                });
+            })
+            .catch((error) => console.error('Error:', error));
+    };
+
+    const handleSendPoints = (amount) => {
+        console.log(chatId, loginUserId, otherUserId, parseFloat(amount));
+        fetch('http://localhost:8080/api/chats/sendPoints', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 headerId: chatId,
                 fromId: loginUserId,
                 toId: otherUserId,
-                content: message.trim(),
-                time: formatDate(new Date()), // 현재 시간을 설정합니다.
-            };
-            setMessage('');
-
-            // Save message to the server
-            fetch('http://localhost:8080/api/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newMessage),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Message sent:', data); // 로그 추가
-                    // WebSocket을 통해 새 메시지를 브로드캐스트합니다.
-                    stompClient.current.publish({
-                        destination: `/app/chat/${chatId}`,
-                        body: JSON.stringify(data),
+                amount: parseFloat(amount),
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.text().then((text) => {
+                        throw new Error(`Network response was not ok: ${response.status} - ${text}`);
                     });
-                })
-                .catch((error) => console.error('Error:', error));
-        }
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Points sent:', data);
+            })
+            .catch((error) => {
+                console.error('Error sending points:', error);
+                console.log('Header ID:', chatId);
+                console.log('From ID:', loginUserId);
+                console.log('To ID:', otherUserId);
+                console.log('Amount:', parseFloat(amount));
+            });
     };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const handleUpdateProposal = (updatedProposal) => {
+        fetch(`http://localhost:8080/api/sendProposal/${updatedProposal.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedProposal),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Proposal updated:', data);
+                fetchProposals(chatId); // Update proposals after editing
+            })
+            .catch((error) => console.error('Error updating proposal:', error));
     };
 
     const renderMessage = (msg, isProposal) => {
@@ -131,7 +192,7 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
             color: msg.fromId === loginUserId ? '#fff' : '#000',
             wordWrap: 'break-word',
         };
-
+        console.log(`사진 경로 : `, msg, msg.photoUrl);
         const proposalStyle = {
             ...messageStyle,
             background: msg.fromId === loginUserId ? '#87ceeb' : '#e0f7fa', // 하늘색 배경
@@ -151,6 +212,16 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
                 <div style={style}>
                     {isProposal ? (
                         <>
+                            <Button
+                                color="secondary"
+                                onClick={() => {
+                                    setCurrentProposal(msg);
+                                    setIsEditProposalModalOpen(true);
+                                }}
+                            >
+                                수정하기
+                            </Button>
+                            <p></p>
                             <p>이름: {msg.goodName}</p>
                             <p>세부사항: {msg.goodDetail}</p>
                             <p>요구사항: {msg.goodRequire}</p>
@@ -163,6 +234,12 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
                                 style={{ maxWidth: '100%' }}
                             />
                         </>
+                    ) : msg.photoUrl ? (
+                        <img
+                            src={`http://localhost:8080/uploads/${msg.photoUrl}`}
+                            alt="Sent photo"
+                            style={{ maxWidth: '100%' }}
+                        />
                     ) : (
                         <p>{msg.content}</p>
                     )}
@@ -178,6 +255,13 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
                     ◁
                 </Button>
                 {chatId}-{otherUserId}
+                <Button
+                    style={{ fontSize: '10px', margin: '10px', float: 'right' }}
+                    color="primary"
+                    onClick={() => setIsSendPointsModalOpen(true)}
+                >
+                    송금
+                </Button>
             </div>
             <div
                 style={{
@@ -212,6 +296,7 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="메시지를 입력하세요"
                     />
+                    <Input type="file" onChange={(e) => setPhoto(e.target.files[0])} />
                     <InputGroupText>
                         <Button color="primary" onClick={handleSend}>
                             전송
@@ -219,6 +304,24 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack }) => {
                     </InputGroupText>
                 </InputGroup>
             </div>
+            <SendPointsModal
+                isOpen={isSendPointsModalOpen}
+                toggle={() => setIsSendPointsModalOpen(false)}
+                headerId={chatId}
+                loginUserId={loginUserId}
+                otherUserId={otherUserId}
+                onSendPoints={handleSendPoints}
+                allPoints={allPoints}
+                sendedPoints={sendedPoints}
+            />
+            {currentProposal && (
+                <EditProposalModal
+                    isOpen={isEditProposalModalOpen}
+                    toggle={() => setIsEditProposalModalOpen(false)}
+                    proposal={currentProposal}
+                    onUpdate={handleUpdateProposal}
+                />
+            )}
         </Container>
     );
 };

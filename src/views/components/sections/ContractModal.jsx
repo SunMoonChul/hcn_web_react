@@ -24,7 +24,7 @@ const ContractModal = ({ isOpen, toggle, email, refreshProposals, initialProposa
                 paymentMethod: initialProposal.payWay,
                 totalAmount: initialProposal.pay,
             });
-            setPreviewImage(`http://localhost:8080/uploads/${initialProposal.photoUrl}`);
+            setPreviewImage(`http://localhost:8080/api/proposals/images/${initialProposal.photoUrl}`);
         } else {
             setFormData({
                 productImage: '',
@@ -59,12 +59,11 @@ const ContractModal = ({ isOpen, toggle, email, refreshProposals, initialProposa
     const handleSubmit = async () => {
         const method = initialProposal ? 'PUT' : 'POST';
         const url = initialProposal
-            ? `http://localhost:8080/api/sendProposal/${initialProposal.id}`
-            : 'http://localhost:8080/api/sendProposal';
+            ? `http://localhost:8080/api/proposals/${initialProposal.id}`
+            : 'http://localhost:8080/api/proposals';
 
         const formDataToSend = new FormData();
-        formDataToSend.append('fromId', email);
-        formDataToSend.append('toId', initialProposal ? initialProposal.toId : '');
+        formDataToSend.append('userId', email);
         formDataToSend.append('goodName', formData.productName);
         formDataToSend.append('goodDetail', formData.productDescription);
         formDataToSend.append('goodRequire', formData.requirements);
@@ -87,14 +86,7 @@ const ContractModal = ({ isOpen, toggle, email, refreshProposals, initialProposa
                 throw new Error('Network response was not ok');
             }
 
-            // Check if response has content
-            let data;
-            try {
-                data = await response.json();
-            } catch (error) {
-                data = null;
-            }
-
+            const data = await response.json();
             console.log('Proposal saved:', data);
             refreshProposals();
             toggle();
