@@ -5,6 +5,13 @@ import { Client } from '@stomp/stompjs';
 import SendPointsModal from './SendPointsModal';
 import EditProposalModal from './EditProposalModal';
 
+//아이콘s
+import moneyImg from '../../../assets/images/icons/money2.png';
+import sendImg from '../../../assets/images/icons/send2.png';
+import editImg from '../../../assets/images/icons/edit2.png';
+import photoImg from '../../../assets/images/icons/photo2.png';
+import listImg from '../../../assets/images/icons/list.png';
+
 const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedPoints }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -92,16 +99,16 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
     };
 
-    const handleSend = () => {
+    const handleSend = (file = null) => {
         const formData = new FormData();
         formData.append('headerId', chatId);
         formData.append('fromId', loginUserId);
         formData.append('toId', otherUserId);
-        formData.append('messageType', photo ? true : false);
+        formData.append('messageType', file ? true : false);
         formData.append('time', formatDate(new Date()));
 
-        if (photo) {
-            formData.append('photo', photo);
+        if (file) {
+            formData.append('photo', file);
         } else {
             formData.append('content', message.trim());
         }
@@ -124,38 +131,12 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
             .catch((error) => console.error('Error:', error));
     };
 
-    const handleSendPoints = (amount) => {
-        console.log(chatId, loginUserId, otherUserId, parseFloat(amount));
-        fetch('http://localhost:8080/api/chats/sendPoints', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                headerId: chatId,
-                fromId: loginUserId,
-                toId: otherUserId,
-                amount: parseFloat(amount),
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    return response.text().then((text) => {
-                        throw new Error(`Network response was not ok: ${response.status} - ${text}`);
-                    });
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('Points sent:', data);
-            })
-            .catch((error) => {
-                console.error('Error sending points:', error);
-                console.log('Header ID:', chatId);
-                console.log('From ID:', loginUserId);
-                console.log('To ID:', otherUserId);
-                console.log('Amount:', parseFloat(amount));
-            });
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhoto(file);
+            handleSend(file);
+        }
     };
 
     const scrollToBottom = () => {
@@ -185,14 +166,17 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
 
     const renderMessage = (msg, isProposal) => {
         const messageStyle = {
-            maxWidth: '60%',
+            maxWidth: '70%', // 말풍선의 너비 70%
             padding: '10px',
             borderRadius: '10px',
             background: msg.fromId === loginUserId ? '#007bff' : '#f1f0f0',
             color: msg.fromId === loginUserId ? '#fff' : '#000',
             wordWrap: 'break-word',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start', // 왼쪽 정렬
         };
-        console.log(`사진 경로 : `, msg, msg.photoUrl);
+
         const proposalStyle = {
             ...messageStyle,
             background: msg.fromId === loginUserId ? '#87ceeb' : '#e0f7fa', // 하늘색 배경
@@ -212,33 +196,25 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
                 <div style={style}>
                     {isProposal ? (
                         <>
-                            <Button
-                                color="secondary"
-                                onClick={() => {
-                                    setCurrentProposal(msg);
-                                    setIsEditProposalModalOpen(true);
-                                }}
-                            >
-                                수정하기
-                            </Button>
-                            <p></p>
                             <p>이름: {msg.goodName}</p>
                             <p>세부사항: {msg.goodDetail}</p>
                             <p>요구사항: {msg.goodRequire}</p>
                             <p>기간: {msg.term}</p>
                             <p>지불 방식: {msg.payWay}</p>
                             <p>지불 금액: {msg.pay}</p>
-                            <img
-                                src={`http://localhost:8080/uploads/${msg.photoUrl}`}
-                                alt={msg.goodName}
-                                style={{ maxWidth: '100%' }}
-                            />
+                            {msg.photoUrl && (
+                                <img
+                                    src={`http://localhost:8080/uploads/${msg.photoUrl}`}
+                                    alt={msg.goodName}
+                                    style={{ maxWidth: '70%' }}
+                                />
+                            )}
                         </>
                     ) : msg.photoUrl ? (
                         <img
                             src={`http://localhost:8080/uploads/${msg.photoUrl}`}
                             alt="Sent photo"
-                            style={{ maxWidth: '100%' }}
+                            style={{ maxWidth: '70%' }}
                         />
                     ) : (
                         <p>{msg.content}</p>
@@ -251,27 +227,58 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
     return (
         <Container style={{ position: 'relative', height: '100vh', padding: '0' }}>
             <div>
-                <Button style={{ fontSize: '10px', margin: '10px' }} color="secondary" onClick={goBack}>
-                    ◁
-                </Button>
-                {chatId}-{otherUserId}
-                <Button
-                    style={{ fontSize: '10px', margin: '10px', float: 'right' }}
-                    color="primary"
-                    onClick={() => setIsSendPointsModalOpen(true)}
-                >
-                    송금
-                </Button>
+                <img
+                    src={listImg}
+                    alt="list"
+                    style={{
+                        width: '40px',
+                        height: '40px',
+                        cursor: 'pointer',
+                        // marginLeft: '5px',
+                        marginRight: '15px',
+                    }}
+                    onClick={goBack}
+                />
+                {otherUserId}
+                <div style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
+                    <img
+                        src={editImg}
+                        alt="edit"
+                        style={{
+                            width: '50px',
+                            height: '50px',
+                            cursor: 'pointer',
+                            marginLeft: '5px',
+                        }}
+                        onClick={() => {
+                            setCurrentProposal({ chatId, otherUserId, loginUserId });
+                            setIsEditProposalModalOpen(true);
+                        }}
+                    />
+                    <img
+                        src={moneyImg}
+                        alt="money"
+                        style={{
+                            width: '40px',
+                            height: '40px',
+                            cursor: 'pointer',
+                            marginLeft: '5px',
+                            marginRight: '10px',
+                        }}
+                        onClick={() => setIsSendPointsModalOpen(true)}
+                    />
+                </div>
             </div>
             <div
                 style={{
                     position: 'absolute',
-                    top: '6%',
+                    top: '50px',
                     left: '0',
                     right: '0',
-                    bottom: '50%',
+                    bottom: '43%',
                     overflowY: 'scroll',
                     padding: '5px',
+                    paddingBottom: '10px',
                 }}
             >
                 {proposals.map((proposal) => renderMessage(proposal, true))}
@@ -281,7 +288,7 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
             <div
                 style={{
                     position: 'absolute',
-                    top: '50%',
+                    top: '600px',
                     left: '0',
                     width: '100%',
                     padding: '10px',
@@ -290,17 +297,37 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
                 }}
             >
                 <InputGroup>
+                    <input type="file" id="photo-upload" style={{ display: 'none' }} onChange={handlePhotoChange} />
+                    <label htmlFor="photo-upload">
+                        <img
+                            src={photoImg}
+                            alt="Upload"
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                cursor: 'pointer',
+                                marginRight: '10px',
+                            }}
+                        />
+                    </label>
                     <Input
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="메시지를 입력하세요"
                     />
-                    <Input type="file" onChange={(e) => setPhoto(e.target.files[0])} />
+
                     <InputGroupText>
-                        <Button color="primary" onClick={handleSend}>
-                            전송
-                        </Button>
+                        <img
+                            src={sendImg}
+                            alt="send"
+                            style={{
+                                width: '30px',
+                                height: '30px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => handleSend()}
+                        />
                     </InputGroupText>
                 </InputGroup>
             </div>
@@ -310,7 +337,6 @@ const ChatRoom = ({ chatId, otherUserId, loginUserId, goBack, allPoints, sendedP
                 headerId={chatId}
                 loginUserId={loginUserId}
                 otherUserId={otherUserId}
-                onSendPoints={handleSendPoints}
                 allPoints={allPoints}
                 sendedPoints={sendedPoints}
             />

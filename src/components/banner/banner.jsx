@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Input, Button } from 'reactstrap';
 
 const HeaderBanner = () => {
-
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
@@ -15,7 +14,7 @@ const HeaderBanner = () => {
             <Container>
                 <Row className="justify-content-center">
                     <Col lg="8" md="6" className="align-self-center text-center">
-                        <h1 className="title">인플루언서 공정 거래 플랫폼</h1>
+                        <h1 className="title">협차니</h1>
                         {/* 검색창 */}
                         <div className="search-bar d-flex">
                             <Input
@@ -25,7 +24,12 @@ const HeaderBanner = () => {
                                 placeholder="검색어 입력"
                                 className="flex-grow-1"
                             />
-                            <Button onClick={handleSearch} color="info" className="ml-2">
+                            <Button
+                                onClick={handleSearch}
+                                color="info"
+                                className="ml-2 d-flex align-items-center justify-content-center"
+                                style={{ whiteSpace: 'nowrap' }} //글자 줄바꿈 x
+                            >
                                 검색
                             </Button>
                         </div>

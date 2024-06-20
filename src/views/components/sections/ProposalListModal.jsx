@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, ListGroup, ListGroupItem } from 'reactstrap';
 import ContractModal from './ContractModal';
 import '../../../assets/css/ProposalListModal.css';
+import editImg from '../../../assets/images/icons/edit2.png';
 
 const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
     const [proposals, setProposals] = useState([]);
@@ -15,7 +16,6 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 .then((data) => {
                     console.log('Fetched proposals:', data);
                     if (Array.isArray(data)) {
-                        // 제안서를 최신순으로 정렬합니다.
                         const sortedProposals = data.sort((a, b) => new Date(b.time) - new Date(a.time));
                         setProposals(sortedProposals);
                     } else {
@@ -38,7 +38,6 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                 .then((data) => {
                     console.log('Fetched proposals:', data);
                     if (Array.isArray(data)) {
-                        // 제안서를 최신순으로 정렬합니다.
                         const sortedProposals = data.sort((a, b) => new Date(b.time) - new Date(a.time));
                         setProposals(sortedProposals);
                     } else {
@@ -74,7 +73,7 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
             const formData = new FormData();
             formData.append('fromId', userId);
             formData.append('toId', toId);
-            formData.append('photoUrl', photoFile); // 파일로 변환된 photoUrl 추가
+            formData.append('photoUrl', photoFile);
             formData.append('goodName', proposal.goodName);
             formData.append('goodDetail', proposal.goodDetail);
             formData.append('goodRequire', proposal.goodRequire);
@@ -92,7 +91,7 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
             }
             const data = await sendResponse.json();
             console.log('Proposal sent:', data);
-            toggle(); // 모달을 닫습니다.
+            toggle();
         } catch (error) {
             console.error('Error:', error);
         }
@@ -124,11 +123,20 @@ const ProposalListModal = ({ isOpen, toggle, userId, toId }) => {
                                             className="proposal-image"
                                         />
                                         <div>이름: {proposal.goodName}</div>
-                                        <div className="proposal-time">작성 시간: {proposal.time}</div>
                                     </div>
-                                    <Button color="secondary" onClick={(e) => handleEditClick(proposal, e)}>
+                                    <img
+                                        src={editImg}
+                                        alt="edit"
+                                        style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={(e) => handleEditClick(proposal, e)}
+                                    />
+                                    {/* <Button color="secondary" onClick={(e) => handleEditClick(proposal, e)}>
                                         수정하기
-                                    </Button>
+                                    </Button> */}
                                 </ListGroupItem>
                             ))
                         ) : (

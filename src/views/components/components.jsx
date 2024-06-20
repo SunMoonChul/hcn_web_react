@@ -8,7 +8,8 @@ import Footer from '../../components/footer/footer.jsx';
 import Buttons from './sections/buttons.jsx';
 import ChatList from './sections/Chatlist.jsx';
 
-import { DataContext } from '../../context/DataContext'; // DataContext를 가져옵니다
+import { DataContext } from '../../context/DataContext'; // DataContext
+import chatImg from '../../assets/images/icons/chat3.png'; // 이미지 경로 수정
 
 // 채팅방
 const ChatPage = ({ toggleChat }) => {
@@ -17,10 +18,10 @@ const ChatPage = ({ toggleChat }) => {
             className="chat-page"
             style={{
                 position: 'fixed', // 채팅 페이지 고정
-                bottom: 90,
+                bottom: 100,
                 right: 30,
                 width: '450px', // 채팅창 크기 조절
-                height: '60%',
+                height: '700px',
                 backgroundColor: '#fff', // 배경색
                 border: '1px solid #ccc', // 테두리
                 padding: '10px',
@@ -29,23 +30,6 @@ const ChatPage = ({ toggleChat }) => {
             }}
         >
             <ChatList toggleChat={toggleChat} />
-            <div
-                style={{
-                    position: 'absolute', // 절대 위치
-                    bottom: '0', // 하단에 고정
-                    left: '0', // 왼쪽 정렬
-                    width: '100%', // 컨테이너 전체 폭
-                    backgroundColor: '#007bff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center', // 가운데 정렬
-                    borderTop: '1px solid #ccc', // 상단에 경계선 추가
-                    borderBottomLeftRadius: '15px', // 하단 모서리 둥글게
-                    borderBottomRightRadius: '15px',
-                }}
-            >
-                {/* 추가 버튼을 여기에 배치할 수 있습니다 */}
-            </div>
         </div>
     );
 };
@@ -74,8 +58,23 @@ const Components = () => {
                 <div className="container-fluid">
                     <HeaderBanner />
                     <Buttons userId={loginUser?.email} /> {/* userId를 Buttons 컴포넌트로 전달 */}
-                    <button className="fixed-chat-button" onClick={toggleChatPage}>
-                        채팅창 이동
+                    <button
+                        className="fixed-chat-button"
+                        onClick={toggleChatPage}
+                        style={{
+                            borderRadius: '50%',
+                            width: '60px',
+                            height: '60px',
+                            position: 'fixed',
+                            bottom: '30px',
+                            right: '30px',
+                            zIndex: '1000',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <img src={chatImg} alt="chat" style={{ width: '200%', height: '110%' }} />
                     </button>
                     {showChatPage && <ChatPage toggleChat={toggleChat} />} {/* 조건부 렌더링 */}
                 </div>

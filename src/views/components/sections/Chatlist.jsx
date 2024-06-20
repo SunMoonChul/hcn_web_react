@@ -5,8 +5,6 @@ import { Client } from '@stomp/stompjs';
 import { DataContext } from '../../../context/DataContext';
 import ChatRoom from './ChatRoom';
 
-const BASE_URL = 'http://localhost:8080'; // 실제 API URL을 넣으세요
-
 const ChatList = () => {
     const [stompClient, setStompClient] = useState(null);
     const [chatsData, setChatsData] = useState([]);
@@ -21,7 +19,7 @@ const ChatList = () => {
             fetchChats(id);
         }
 
-        const socket = new SockJS(`${BASE_URL}/ws`);
+        const socket = new SockJS(`http://localhost:8080/ws`);
         const client = new Client({
             webSocketFactory: () => socket,
             debug: function (str) {
@@ -87,8 +85,8 @@ const ChatList = () => {
                 style={{ marginBottom: '5px' }}
             >
                 <div>
-                    <strong>상대방 ID: {otherUserId}</strong>
-                    <p>최근 메시지: {item.last_message}</p>
+                    <strong>{otherUserId}</strong>
+                    <p>{item.last_message}</p>
                     <p>
                         총 금액: {item.all_points} 보낸 금액 : {item.sended_points}
                     </p>
@@ -112,7 +110,7 @@ const ChatList = () => {
             ) : loading ? (
                 <Spinner color="primary" />
             ) : chatsData.length > 0 ? (
-                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
                     <ListGroup>{chatsData.map((item) => renderChatListItem(item))}</ListGroup>
                 </div>
             ) : (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import './ContractModal.css'; // CSS 파일을 import 합니다.
 
 const ContractModal = ({ isOpen, toggle, email, refreshProposals, initialProposal }) => {
     const [formData, setFormData] = useState({
